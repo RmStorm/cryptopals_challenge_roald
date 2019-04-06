@@ -1,4 +1,6 @@
-def bytes_xor(byte_str1: bytes, byte_str2: bytes) -> bytes:
+from typing import Union
+
+def bytes_xor(byte_str1: bytes, byte_str2: Union[bytes, iter]) -> bytes:
     return bytes(a ^ b for a, b in zip(byte_str1, byte_str2))
 
 if __name__ == '__main__':
