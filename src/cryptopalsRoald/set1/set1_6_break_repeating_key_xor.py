@@ -11,16 +11,16 @@ def compute_hamming_distance(bytes_str1, bytes_str2) -> int:
     return sum(int(a) for item in bytes_xor(bytes_str1, bytes_str2).hex() for a in HEX_TO_BIT[item])
 
 
-def estimate_key_size_for_file(encrypted_bytes: bytes, start_key_size: int, end_key_size: int):
+def estimate_key_size_for_file(encrypted_bytes: bytes, start_key_size: int, end_key_size: int,
+                               number_of_blocks: int = 3):
     """
     When bytes are encrypted using XOR their results tend to have a smaller hamming distance. The Hamming distance is
     easy to compute between several blocks of bytes. To get a more informative metric the Hamming distance should be
     normalized by the possible key_size
 
-    This file returns: probable_key, distances, minimum distance
+    This file returns: probable_key, distances, minimum_distance
     usage: key_size, _, _ = estimate_key_size_for_file(encrypted_bytes, 10, 40)
     """
-    number_of_blocks = 5
     distances = {}
     for key_size in range(start_key_size, end_key_size):
         blocks = [encrypted_bytes[i*key_size: (i+1)*key_size] for i in range(number_of_blocks)]
