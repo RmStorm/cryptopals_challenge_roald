@@ -31,11 +31,12 @@ def test_set_1_3():
 def test_set_1_4():
     with open(os.path.join(os.getcwd(), '..', '..', 'data', 'set1_4_data'), 'r') as file_handle:
         for line_number, line in enumerate(file_handle):
-            result = decode_byte_string_with_bytes(bytes.fromhex(line), .9)
-            for k, v in result.items():
-                assert k == b'5'
-                assert v == b'Now that the party is jumping\n'
-                break
+            if line_number == 170:
+                result = decode_byte_string_with_bytes(bytes.fromhex(line), .9)
+                for k, v in result.items():
+                    assert k == b'5'
+                    assert v == b'Now that the party is jumping\n'
+                    break
 
 
 def test_set_1_5():
@@ -48,7 +49,7 @@ def test_set_1_5():
 def test_set_1_6():
     str1 = b'this is a test'
     str2 = b'wokka wokka!!!'
-    compute_hamming_distance(str1, str2)
+    assert compute_hamming_distance(str1, str2) == 37
 
 if __name__ == '__main__':
     pytest.main()
