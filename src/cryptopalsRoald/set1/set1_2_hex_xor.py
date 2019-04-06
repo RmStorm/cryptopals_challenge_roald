@@ -1,5 +1,4 @@
 def bytes_xor(byte_str1: bytes, byte_str2: bytes) -> bytes:
-    assert len(byte_str1) == len(byte_str2)
     return bytes(a ^ b for a, b in zip(byte_str1, byte_str2))
 
 if __name__ == '__main__':

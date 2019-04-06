@@ -1,3 +1,5 @@
+from itertools import cycle
+
 from cryptopalsRoald.set1 import set1_2_hex_xor
 from cryptopalsRoald.roald_codecs import HEX_MAP
 
@@ -5,7 +7,7 @@ ALPHABET_BYTES = b'abcdefghijklmnopqrstuvwxyz0123456789 '
 ALL_BYTES = [bytes.fromhex(k1 + k2) for k1 in HEX_MAP.keys() for k2 in HEX_MAP.keys()]
 
 def xor_against_single_char(input_bytes: bytes, decoding_char: bytes):
-    return set1_2_hex_xor.bytes_xor(input_bytes, decoding_char*len(input_bytes))
+    return set1_2_hex_xor.bytes_xor(input_bytes, cycle(decoding_char))
 
 
 def decode_byte_string_with_bytes(bytes_str: bytes, percentage: float):
