@@ -31,13 +31,14 @@ def estimate_key_size_for_file(encrypted_bytes: bytes, start_key_size: int, end_
 
 def break_key_for_key_length(encrypted_bytes: bytes, key_size: int) -> bytes:
     solved = {group:False for group in range(key_size)}
-    threshold = .9
+    threshold = .99
     while any(val is False for val in solved.values()) and threshold > 0:
         for group in range(key_size):
             if not solved[group]:
                 for k, v in decode_byte_string_with_bytes(encrypted_bytes[group::key_size], threshold).items():
                     solved[group] = k
-        threshold = threshold -.025
+        threshold = threshold -.04
+        print(threshold)
     return b''.join(solved.values())
 
 
