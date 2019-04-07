@@ -1,7 +1,4 @@
-from typing import Union
-
-def bytes_xor(byte_str1: bytes, byte_str2: Union[bytes, iter]) -> bytes:
-    return bytes(a ^ b for a, b in zip(byte_str1, byte_str2))
+from cryptopalsRoald.crypto_lib import bytes_xor
 
 if __name__ == '__main__':
     str1 = '1c0111001f010100061a024b53535009181c'

@@ -1,6 +1,4 @@
-def apply_pkcs_7_padding(input_bytes: bytes, block_length: int) -> bytes:
-    padding_length = block_length - len(input_bytes)%block_length
-    return input_bytes + bytes([padding_length])*padding_length
+from cryptopalsRoald.crypto_lib import apply_pkcs_7_padding
 
 
 def main():

@@ -1,6 +1,6 @@
 import pytest
 
-from cryptopalsRoald.set2.set2_9_implement_pkcs_num7_padding import apply_pkcs_7_padding
+from cryptopalsRoald.crypto_lib import apply_pkcs_7_padding
 
 @pytest.mark.parametrize("block_length", [4, 8, 16, 20, 36])
 def test_set_2_1(block_length):

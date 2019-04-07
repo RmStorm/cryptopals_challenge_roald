@@ -3,11 +3,10 @@ from itertools import cycle
 
 import pytest
 
+from cryptopalsRoald.crypto_lib import bytes_xor, AES_ECB_Cipher
 from cryptopalsRoald.set1 import set1_1_hex_to_base64
-from cryptopalsRoald.set1.set1_2_hex_xor import bytes_xor
 from cryptopalsRoald.set1.set1_3_decode_hex import decode_byte_string_with_bytes
 from cryptopalsRoald.set1.set1_6_break_repeating_key_xor import compute_hamming_distance
-from cryptopalsRoald.set1.set1_7_decrypt_AES_128_ECB import AES_ECB_Cipher
 
 
 def test_set_1_1():

@@ -1,21 +1,8 @@
 import os
 import base64
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
 
+from cryptopalsRoald.crypto_lib import AES_ECB_Cipher
 
-class AES_ECB_Cipher(object):
-    def __init__(self, key):
-        backend = default_backend()
-        cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
-        self.encryptor = cipher.encryptor()
-        self.decryptor = cipher.decryptor()
-
-    def encrypt(self, byte_str: bytes):
-        return self.encryptor.update(byte_str)
-
-    def decrypt(self, byte_str: bytes):
-        return self.decryptor.update(byte_str)
 
 def main():
     with open(os.path.join(os.getcwd(), '..', '..', '..', 'data', 'set1_7_data'), 'br') as file_handle:

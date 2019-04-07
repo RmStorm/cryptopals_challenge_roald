@@ -3,7 +3,7 @@ import base64
 from itertools import cycle
 
 from cryptopalsRoald.roald_codecs import HEX_TO_BIT
-from cryptopalsRoald.set1.set1_2_hex_xor import bytes_xor
+from cryptopalsRoald.crypto_lib import bytes_xor
 from cryptopalsRoald.set1.set1_3_decode_hex import decode_byte_string_with_bytes
 
 
