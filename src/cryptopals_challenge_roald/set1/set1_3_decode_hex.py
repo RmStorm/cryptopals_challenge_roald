@@ -1,7 +1,7 @@
 from itertools import cycle
 
-from cryptopalsRoald.crypto_lib import bytes_xor
-from cryptopalsRoald.roald_codecs import HEX_MAP
+from cryptopals_challenge_roald.crypto_lib import bytes_xor
+from cryptopals_challenge_roald.roald_codecs import HEX_MAP
 
 ALPHABET_BYTES = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' "
 ALL_BYTES = [bytes.fromhex(k1 + k2) for k1 in HEX_MAP.keys() for k2 in HEX_MAP.keys()]

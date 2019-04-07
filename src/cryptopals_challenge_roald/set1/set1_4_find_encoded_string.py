@@ -1,5 +1,5 @@
 import os
-from cryptopalsRoald.set1.set1_3_decode_hex import decode_byte_string_with_bytes
+from cryptopals_challenge_roald.set1.set1_3_decode_hex import decode_byte_string_with_bytes
 
 
 def main():

@@ -1,4 +1,4 @@
-from cryptopalsRoald.crypto_lib import bytes_xor
+from cryptopals_challenge_roald.crypto_lib import bytes_xor
 
 if __name__ == '__main__':
     str1 = '1c0111001f010100061a024b53535009181c'

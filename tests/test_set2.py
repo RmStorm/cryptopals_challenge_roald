@@ -3,7 +3,7 @@ import base64
 
 import pytest
 
-from cryptopalsRoald.crypto_lib import apply_pkcs_7_padding, AesCbcCipher
+from cryptopals_challenge_roald.crypto_lib import apply_pkcs_7_padding, AesCbcCipher
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 

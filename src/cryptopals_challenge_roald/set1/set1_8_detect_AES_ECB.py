@@ -1,6 +1,6 @@
 import os
 
-from cryptopalsRoald.set1.set1_6_break_repeating_key_xor import estimate_key_size_for_file
+from cryptopals_challenge_roald.set1.set1_6_break_repeating_key_xor import estimate_key_size_for_file
 
 
 def main():

@@ -1,4 +1,4 @@
-from cryptopalsRoald.crypto_lib import apply_pkcs_7_padding
+from cryptopals_challenge_roald.crypto_lib import apply_pkcs_7_padding
 
 
 def main():

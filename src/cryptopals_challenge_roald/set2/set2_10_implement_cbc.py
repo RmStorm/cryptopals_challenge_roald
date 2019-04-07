@@ -1,7 +1,7 @@
 import os
 import base64
 
-from cryptopalsRoald.crypto_lib import AesCbcCipher
+from cryptopals_challenge_roald.crypto_lib import AesCbcCipher
 
 
 def main():
