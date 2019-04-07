@@ -8,11 +8,11 @@ BASE64MAP = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I'
 HEX_MAP = {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 'a': 10, 'b': 11, 'c': 12,
            'd': 13, 'e': 14, 'f': 15}
 
-BASE64_TO_BIT = {k: f'{v:06b}' for k,v in BASE64MAP.items()}
-BIT_TO_BASE64 = {f'{v:06b}': k for k,v in BASE64MAP.items()}
+BASE64_TO_BIT = {k: f'{v:06b}' for k, v in BASE64MAP.items()}
+BIT_TO_BASE64 = {f'{v:06b}': k for k, v in BASE64MAP.items()}
 
-HEX_TO_BIT = {k: f'{v:04b}' for k,v in HEX_MAP.items()}
-BIT_TO_HEX = {f'{v:04b}': k for k,v in HEX_MAP.items()}
+HEX_TO_BIT = {k: f'{v:04b}' for k, v in HEX_MAP.items()}
+BIT_TO_HEX = {f'{v:04b}': k for k, v in HEX_MAP.items()}
 
 HEX_TO_BASE64 = {ak+bk+ck: BIT_TO_BASE64[av+bv[:2]]+BIT_TO_BASE64[bv[-2:]+cv]
                  for ak, av in HEX_TO_BIT.items() for bk, bv in HEX_TO_BIT.items() for ck, cv in HEX_TO_BIT.items()}

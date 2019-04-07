@@ -6,6 +6,7 @@ import pytest
 from cryptopals_challenge_roald.crypto_lib import apply_pkcs_7_padding, AesEcbCipher, AesCbcCipher
 from cryptopals_challenge_roald.set2.set2_11_ecb_cbc_detection_oracle import encryption_oracle
 from cryptopals_challenge_roald.set2 import set2_12_byte_at_a_time_ecb_decryption
+from cryptopals_challenge_roald.set2.set2_13_ecb_cut_and_paste import profile_for
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -52,6 +53,15 @@ def test_set_2_12():
                      b'The girlies on standby waving just to say hi\nDid you stop? No, I just drove by\n'
 
     assert set2_12_byte_at_a_time_ecb_decryption.crack_ecb_encryptor(encryptor, 16, 138) == known_solution
+
+
+@pytest.mark.parametrize("user_email", ['it@it.com', 'it@it.com', 'it@it.com'])
+def test_set_2_13(user_email):
+    import json
+
+    print(json.dumps(profile_for(user_email), indent=2))
+    # assert False
+
 
 if __name__ == '__main__':
     pytest.main()

@@ -51,6 +51,7 @@ def crack_ecb_encryptor(encryptor, block_size, secret_string_length):
                 break
     return known_bytes
 
+
 def main():
     encryptor = get_encryptor_with_input_prepend()
     block_size, secret_string_length = get_block_size(encryptor)
