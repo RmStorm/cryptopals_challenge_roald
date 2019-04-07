@@ -3,10 +3,12 @@ from itertools import cycle
 
 import pytest
 
-from cryptopalsRoald.crypto_lib import bytes_xor, AES_ECB_Cipher
+from cryptopalsRoald.crypto_lib import bytes_xor, AesEcbCipher
 from cryptopalsRoald.set1 import set1_1_hex_to_base64
 from cryptopalsRoald.set1.set1_3_decode_hex import decode_byte_string_with_bytes
 from cryptopalsRoald.set1.set1_6_break_repeating_key_xor import compute_hamming_distance
+
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
 def test_set_1_1():
@@ -30,7 +32,7 @@ def test_set_1_3():
 
 
 def test_set_1_4():
-    with open(os.path.join(os.getcwd(), '..', '..', 'data', 'set1_4_data'), 'r') as file_handle:
+    with open(os.path.join(DIR_PATH, '..', 'data', 'set1_4_data'), 'r') as file_handle:
         for line_number, line in enumerate(file_handle):
             if line_number == 170:
                 result = decode_byte_string_with_bytes(bytes.fromhex(line), .99)
@@ -56,7 +58,7 @@ def test_set_1_6():
 def test_set_1_7():
     str1 = os.urandom(32)
     key = b'YELLOW SUBMARINE'
-    aes_ecb_cipher = AES_ECB_Cipher(key)
+    aes_ecb_cipher = AesEcbCipher(key)
     assert aes_ecb_cipher.decrypt(aes_ecb_cipher.encrypt(str1)) == str1
 
 

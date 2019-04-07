@@ -1,7 +1,7 @@
 import os
 import base64
 
-from cryptopalsRoald.crypto_lib import AES_ECB_Cipher
+from cryptopalsRoald.crypto_lib import AesEcbCipher
 
 
 def main():
@@ -9,7 +9,7 @@ def main():
         encrypted_bytes = base64.b64decode(file_handle.read())
 
     key = b'YELLOW SUBMARINE'
-    aes_ecb_cipher = AES_ECB_Cipher(key)
+    aes_ecb_cipher = AesEcbCipher(key)
 
     my_text = aes_ecb_cipher.decrypt(encrypted_bytes)
     print(my_text)
