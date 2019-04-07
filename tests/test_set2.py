@@ -5,6 +5,7 @@ import pytest
 
 from cryptopals_challenge_roald.crypto_lib import apply_pkcs_7_padding, AesEcbCipher, AesCbcCipher
 from cryptopals_challenge_roald.set2.set2_11_ecb_cbc_detection_oracle import encryption_oracle
+from cryptopals_challenge_roald.set2 import set2_12_byte_at_a_time_ecb_decryption
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -43,6 +44,14 @@ def test_set_2_11():
 
     assert encryption_oracle(ecb_encryptor) == 'ECB'
     assert encryption_oracle(cbc_encryptor) == 'Not ECB'
+
+
+def test_set_2_12():
+    encryptor = set2_12_byte_at_a_time_ecb_decryption.get_encryptor_with_input_prepend()
+    known_solution = b'Rollin\' in my 5.0\nWith my rag-top down so my hair can blow\n' \
+                     b'The girlies on standby waving just to say hi\nDid you stop? No, I just drove by\n'
+
+    assert set2_12_byte_at_a_time_ecb_decryption.crack_ecb_encryptor(encryptor, 16, 138) == known_solution
 
 if __name__ == '__main__':
     pytest.main()
