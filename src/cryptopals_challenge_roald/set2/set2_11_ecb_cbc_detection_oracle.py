@@ -9,10 +9,10 @@ def encryption_oracle(unknown_encryptor: Callable[[bytes, bytes], bytes]) -> str
 
     The expected input arguments for the encryption function are: a byte_string to be encrypted and an encryption key.
     The output of the function should be an encrypted string"""
-    my_bytes = b'This is 16 bytes'*30
+    my_bytes = b'This is 16 bytes'*3
     encrypted_bytes = unknown_encryptor(my_bytes, os.urandom(16))
-    hamming_distance = average_hamming_distance_between_blocks(encrypted_bytes[32:], 16, 20)
-    return 'ECB' if hamming_distance < 3 else 'Not ECB'
+    hamming_distance = average_hamming_distance_between_blocks(encrypted_bytes[16:], 16, 2)
+    return 'ECB' if hamming_distance == 0 else 'Not ECB'
 
 
 def encrypt_ecb_or_cbc(bytes_str: bytes, key: bytes) -> bytes:
