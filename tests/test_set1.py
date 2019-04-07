@@ -3,10 +3,9 @@ from itertools import cycle
 
 import pytest
 
-from cryptopals_challenge_roald.crypto_lib import bytes_xor, AesEcbCipher
+from cryptopals_challenge_roald.crypto_lib import bytes_xor, AesEcbCipher, compute_hamming_distance
 from cryptopals_challenge_roald.set1 import set1_1_hex_to_base64
 from cryptopals_challenge_roald.set1.set1_3_decode_hex import decode_byte_string_with_bytes
-from cryptopals_challenge_roald.set1.set1_6_break_repeating_key_xor import compute_hamming_distance
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 

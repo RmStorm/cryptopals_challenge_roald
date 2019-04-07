@@ -3,13 +3,26 @@ from typing import Union
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 
+from cryptopals_challenge_roald.roald_codecs import HEX_TO_BIT
+
 
 def bytes_xor(byte_str1: bytes, byte_str2: Union[bytes, iter]) -> bytes:
     return bytes(a ^ b for a, b in zip(byte_str1, byte_str2))
 
 
+def compute_hamming_distance(bytes_str1, bytes_str2) -> int:
+    return sum(int(a) for item in bytes_xor(bytes_str1, bytes_str2).hex() for a in HEX_TO_BIT[item])
+
+
+def average_hamming_distance_between_blocks(encrypted_bytes: bytes, key_size: int, number_of_blocks: int) -> float:
+    blocks = [encrypted_bytes[i*key_size: (i+1)*key_size] for i in range(number_of_blocks)]
+    dists = [compute_hamming_distance(bytes_str1, bytes_str2) for bytes_str1 in blocks for bytes_str2 in blocks]
+    return sum(dists) / float(key_size * len(dists))
+
+
 def apply_pkcs_7_padding(input_bytes: bytes, block_length: int) -> bytes:
-    padding_length = (block_length - len(input_bytes)%block_length) if len(input_bytes)%block_length != 0 else 0
+    modulo_length = len(input_bytes) % block_length
+    padding_length = (block_length - modulo_length) if modulo_length != 0 else 0
     return input_bytes + bytes([padding_length])*padding_length
 
 
@@ -19,9 +32,11 @@ class AesEcbCipher(object):
         cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
         self.encryptor = cipher.encryptor()
         self.decryptor = cipher.decryptor()
+        self.key_size = len(key)
 
     def encrypt(self, byte_str: bytes):
-        return self.encryptor.update(byte_str)
+        encryptable_bytes = apply_pkcs_7_padding(byte_str, self.key_size)
+        return self.encryptor.update(encryptable_bytes)
 
     def decrypt(self, byte_str: bytes):
         return self.decryptor.update(byte_str)
