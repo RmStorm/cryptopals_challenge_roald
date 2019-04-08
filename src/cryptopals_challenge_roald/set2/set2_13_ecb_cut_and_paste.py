@@ -1,9 +1,11 @@
-import re
+import os
+# import re
 from typing import Dict
 
-import json
+from cryptopals_challenge_roald.crypto_lib import AesEcbCipher
 
-EMAIL_REGEX = re.compile("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+# EMAIL_REGEX = re.compile("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+AES_ECB_CIPHER = AesEcbCipher(os.urandom(16))
 
 
 def cookie_parser(input_str: str) -> Dict:
@@ -17,13 +19,15 @@ def cookie_baker(input_dict: Dict) -> str:
 
 def profile_for(email: str) -> Dict:
     """Accepts an email adress and returns a user object with an id and role"""
-    assert EMAIL_REGEX.match(email)
+    email = email.replace('&', '').replace('=', '')
     return {'email': email, 'uid': 10, 'role': 'user'}
 
 
+def get_encrypted_and_encoded_profile(email: str):
+    return AES_ECB_CIPHER.encrypt(bytes(cookie_baker(profile_for(email)), 'utf-8'))
+
 def main():
-    print(json.dumps(cookie_parser('foo=bar&baz=qux&zap=zazzle'), indent=2))
-    print(cookie_baker(cookie_parser('foo=bar&baz=qux&zap=zazzle')))
+    print(get_encrypted_and_encoded_profile(chr(8) + 'aaaa@a.a'))
 
 
 if __name__ == '__main__':

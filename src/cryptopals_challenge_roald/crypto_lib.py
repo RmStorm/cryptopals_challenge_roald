@@ -35,8 +35,7 @@ class AesEcbCipher(object):
         self.key_size = len(key)
 
     def encrypt(self, byte_str: bytes):
-        encryptable_bytes = apply_pkcs_7_padding(byte_str, self.key_size)
-        return self.encryptor.update(encryptable_bytes)
+        return self.encryptor.update(apply_pkcs_7_padding(byte_str, self.key_size))
 
     def decrypt(self, byte_str: bytes):
         return self.decryptor.update(byte_str)
