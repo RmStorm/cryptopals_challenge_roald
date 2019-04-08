@@ -20,6 +20,7 @@ def test_set_2_9(block_length):
         assert len(padded) == len(bytes_str)
     else:
         assert padded[:-padded[-1]] == bytes_str
+        assert padded[-padded[-1]:] == bytes([padded[-1]])*padded[-1]
     assert len(padded) % block_length == 0
 
 

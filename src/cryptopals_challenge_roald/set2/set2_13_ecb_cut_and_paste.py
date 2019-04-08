@@ -27,7 +27,14 @@ def get_encrypted_and_encoded_profile(email: str):
     return AES_ECB_CIPHER.encrypt(bytes(cookie_baker(profile_for(email)), 'utf-8'))
 
 def main():
-    print(get_encrypted_and_encoded_profile(chr(8) + 'aaaa@a.a'))
+    # The starting assumption is the knowledge that a decrypted cookie looks like: email=emailadress&uid=10&role=user
+    # The first step is to fill up the first codeblock with nonsense and find a code block for the padded word 'admin'
+    admin_suffix = get_encrypted_and_encoded_profile(chr(0)*(16-len('email=')) + 'admin' + chr(11)*11)[16:32]
+    # The second step is to make email=emailadress&uid=10&role= take up exactly 32 bytes
+    print(len('email='), len('roald@awe.som'), len('&uid=10&role='))
+    email_part = get_encrypted_and_encoded_profile('roald@awe.som')[:32]
+    result = AES_ECB_CIPHER.decrypt(email_part+admin_suffix)
+    print(result[:-result[-1]])
 
 
 if __name__ == '__main__':
