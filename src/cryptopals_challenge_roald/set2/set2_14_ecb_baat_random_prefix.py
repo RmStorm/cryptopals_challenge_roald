@@ -6,49 +6,49 @@ from typing import Callable, Union
 from cryptopals_challenge_roald.crypto_lib import AesEcbCipher, crack_ecb_encryptor
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-RETRIES_FOR_MAX = 100
 
 
-def get_encryptor_with_attack_bytes_in_middle():
+def get_encryptor_with_attack_bytes_in_middle(starting_length: int, random_length: int):
     unknown_key = os.urandom(16)
+    assert(random_length >= 1 , 'At least 1 byte of randomness is required')
     with open(os.path.join(DIR_PATH, '..', '..', '..', 'data', 'set2_12_data'), 'br') as file_handle:
         unknown_bytes = base64.b64decode(file_handle.read())
     aes_ecb_cipher = AesEcbCipher(unknown_key)
 
     def encryptor(attacker_controlled: bytes) -> bytes:
-        random_prepend = os.urandom(9 + int(os.urandom(1)[0] / (2 ** 8 / 7)))
-        return aes_ecb_cipher.encrypt(random_prepend + attacker_controlled + unknown_bytes)
+        prepend = os.urandom(starting_length + int(os.urandom(1)[0] / (2 ** 8 / random_length)))
+        return aes_ecb_cipher.encrypt(prepend + attacker_controlled + unknown_bytes)
     return encryptor
 
 
-def get_block_size(encryptor: Callable[[bytes], bytes]) -> int:
+def get_block_size(encryptor: Callable[[bytes], bytes], retries_for_max: int = 100) -> int:
     # Tune retries for max to block_size, it should be a bunch bigger than the block size I think
     cipher_lengths = []
-    for attack_length in range(RETRIES_FOR_MAX):
+    for attack_length in range(retries_for_max):
         attack_bytes = bytes([0])*attack_length
-        cipher_lengths.extend([len(encryptor(attack_bytes)) for _ in range(RETRIES_FOR_MAX)])
+        cipher_lengths.extend([len(encryptor(attack_bytes)) for _ in range(retries_for_max)])
         two_largest = heapq.nlargest(2, set(cipher_lengths))
         if len(two_largest) == 2:
             return two_largest[0]-two_largest[1]
 
 
-def get_attack_length_for_cipher_increase(encryptor: Callable[[bytes], bytes]) -> int:
-    max_starting_size = max([len(encryptor(b'')) for _ in range(RETRIES_FOR_MAX)])
+def get_attack_length_for_cipher_increase(encryptor: Callable[[bytes], bytes], retries_for_max: int = 100) -> int:
+    max_starting_size = max([len(encryptor(b'')) for _ in range(retries_for_max)])
     attack_lengths = []
-    for _ in range(RETRIES_FOR_MAX):
-        for attack_length in range(RETRIES_FOR_MAX):
+    for _ in range(retries_for_max):
+        for attack_length in range(retries_for_max):
             attack_bytes = bytes([0]) * attack_length
-            max_cur_size = max([len(encryptor(attack_bytes)) for _ in range(RETRIES_FOR_MAX)])
+            max_cur_size = max([len(encryptor(attack_bytes)) for _ in range(retries_for_max)])
             if max_cur_size > max_starting_size:
                 attack_lengths.append(attack_length)
                 break
-    assert len(set(attack_lengths)) == 1, 'Increase RETRIES_FOR_MAX to consistently hit the longest random prepend'
+    assert len(set(attack_lengths)) == 1, 'Increase retries_for_max to consistently hit the longest random prepend'
     return attack_lengths[0]
 
 
-def crack_ecb_encryptor_with_random_prepend(encryptor: Callable[[bytes], bytes],
-                                            block_size: int, attack_length: int) -> bytes:
-    max_cipher_length = max([len(encryptor(bytes([0])*attack_length)) for _ in range(RETRIES_FOR_MAX)])
+def crack_ecb_encryptor_with_random_prepend(encryptor: Callable[[bytes], bytes], block_size: int,
+                                            attack_length: int, retries_for_max: int = 100) -> bytes:
+    max_cipher_length = max([len(encryptor(bytes([0])*attack_length)) for _ in range(retries_for_max)])
 
     def get_max_length_cipher(attack_bytes: bytes) -> bytes:
         max_length_cipher_text = encryptor(attack_bytes)
@@ -83,17 +83,17 @@ def crack_ecb_encryptor_with_random_prepend(encryptor: Callable[[bytes], bytes],
     attack_bytes_first_part = bytes([0]) * (attack_length-1) + zeros_with_a_one[:end_of_last_attacker_block+2]
 
     def get_cipher_text(attack_bytes_extra: Union[bytearray, bytes]) -> bytes:
-        for _ in range(RETRIES_FOR_MAX):
+        for _ in range(retries_for_max):
             cipher_text = encryptor(attack_bytes_first_part + attack_bytes_extra)
             if seven_zeros_ending_on_one_cipher == block_getter(cipher_text, last_attacker_block_index):
                 return cipher_text
-        raise RuntimeError(f'recognizable string was not encountered in ciphertext in {RETRIES_FOR_MAX} tries')
+        raise RuntimeError(f'recognizable string was not encountered in ciphertext in {retries_for_max} tries')
 
     return crack_ecb_encryptor(get_cipher_text, block_size, secret_string_length, last_attacker_block_index + 1)
 
 
 def main():
-    encryptor = get_encryptor_with_attack_bytes_in_middle()
+    encryptor = get_encryptor_with_attack_bytes_in_middle(9, 7)
     block_size = get_block_size(encryptor)
     attack_length = get_attack_length_for_cipher_increase(encryptor)
 

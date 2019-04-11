@@ -6,6 +6,21 @@ from cryptography.hazmat.backends import default_backend
 from cryptopals_challenge_roald.roald_codecs import HEX_TO_BIT
 
 
+def apply_pkcs_7_padding(input_bytes: bytes, block_length: int) -> bytes:
+    modulo_length = len(input_bytes) % block_length
+    padding_length = (block_length - modulo_length) if modulo_length != 0 else 0
+    return input_bytes + bytes([padding_length])*padding_length
+
+
+def verify_and_remove_pkcs_7_padding(input_bytes: Union[bytes, bytearray]):
+    final_pad = input_bytes[-1]
+    print(final_pad)
+    if all(pad == final_pad for pad in input_bytes[-int(final_pad):]):
+        return input_bytes[:-int(final_pad)]
+    else:
+        return input_bytes
+
+
 def bytes_xor(byte_str1: bytes, byte_str2: Union[bytes, iter]) -> bytes:
     return bytes(a ^ b for a, b in zip(byte_str1, byte_str2))
 
@@ -18,12 +33,6 @@ def average_hamming_distance_between_blocks(encrypted_bytes: bytes, key_size: in
     blocks = [encrypted_bytes[i*key_size: (i+1)*key_size] for i in range(number_of_blocks)]
     dists = [compute_hamming_distance(bytes_str1, bytes_str2) for bytes_str1 in blocks for bytes_str2 in blocks]
     return sum(dists) / float(key_size * len(dists))
-
-
-def apply_pkcs_7_padding(input_bytes: bytes, block_length: int) -> bytes:
-    modulo_length = len(input_bytes) % block_length
-    padding_length = (block_length - modulo_length) if modulo_length != 0 else 0
-    return input_bytes + bytes([padding_length])*padding_length
 
 
 class AesEcbCipher(object):
@@ -89,4 +98,3 @@ def crack_ecb_encryptor(encryptor, block_size, secret_string_length, start_block
                 known_bytes.append(byte)
                 break
     return known_bytes
-

@@ -3,7 +3,8 @@ import base64
 
 import pytest
 
-from cryptopals_challenge_roald.crypto_lib import apply_pkcs_7_padding, AesEcbCipher, AesCbcCipher, crack_ecb_encryptor
+from cryptopals_challenge_roald.crypto_lib import AesEcbCipher, AesCbcCipher, crack_ecb_encryptor, \
+    apply_pkcs_7_padding, verify_and_remove_pkcs_7_padding
 from cryptopals_challenge_roald.set2.set2_11_ecb_cbc_detection_oracle import encryption_oracle
 from cryptopals_challenge_roald.set2.set2_12_byte_at_a_time_ecb_decryption import get_encryptor_with_attacker_prepend
 from cryptopals_challenge_roald.set2.set2_13_ecb_cut_and_paste import profile_for
@@ -66,12 +67,17 @@ def test_set_2_13(user_email):
 
 
 def test_set_2_14():
-    encryptor = get_encryptor_with_attack_bytes_in_middle()
+    encryptor = get_encryptor_with_attack_bytes_in_middle(2, 1)
     known_solution = b'Rollin\' in my 5.0\nWith my rag-top down so my hair can blow\n' \
                      b'The girlies on standby waving just to say hi\nDid you stop? No, I just drove by\n'
 
-    attack_length = get_attack_length_for_cipher_increase(encryptor)
-    assert crack_ecb_encryptor_with_random_prepend(encryptor, 16, attack_length) == known_solution
+    attack_length = get_attack_length_for_cipher_increase(encryptor, retries_for_max=10)
+    assert crack_ecb_encryptor_with_random_prepend(encryptor, 16, attack_length, retries_for_max=10) == known_solution
+
+
+def test_set_2_15():
+    assert verify_and_remove_pkcs_7_padding(b'ICE ICE BABY\x04\x04\x04\x04') == b'ICE ICE BABY'
+    assert verify_and_remove_pkcs_7_padding(b'ICE ICE BABY\x05\x05\x05\x05') == b'ICE ICE BABY\x05\x05\x05\x05'
 
 
 if __name__ == '__main__':
