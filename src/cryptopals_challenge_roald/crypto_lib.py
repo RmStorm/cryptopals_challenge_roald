@@ -65,3 +65,28 @@ class AesCbcCipher(object):
             decrypted_blocks.append(bytes_xor(prev_block, self.aes_ecb_cipher.decryptor.update(this_block)))
             prev_block = this_block
         return b''.join(decrypted_blocks)
+
+
+def crack_ecb_encryptor(encryptor, block_size, secret_string_length, start_block):
+    """This cracks ECB"""
+    def block_getter(byte_str: bytes, block: int) -> bytes:
+        return byte_str[block * block_size:(1 + block) * block_size]
+
+    known_bytes = bytearray()
+    # Create n cipher texts with 15-0 zeros prepended, these can be indexed and matched against later on
+    cipher_texts = {i: encryptor(bytes([0]*(block_size - i - 1))) for i in range(block_size)}
+    # The first block we will crack is all zeros with 1 unknown character
+    known_block_minus_one = bytearray([0]*(block_size-1))
+    while len(known_bytes) != secret_string_length:
+        # Get the block that is currently being cracked
+        next_block = start_block + int((len(known_bytes))/block_size)
+        wanted = block_getter(cipher_texts[len(known_bytes) % block_size], next_block)
+        for byte in range(2**8):
+            # Here we only use the first block of the cipher text. The rest can be considered noise.
+            cipher_text = block_getter(encryptor(known_block_minus_one + bytes([byte])), start_block)
+            if wanted == cipher_text:
+                known_block_minus_one = known_block_minus_one[1:] + bytearray([byte])
+                known_bytes.append(byte)
+                break
+    return known_bytes
+

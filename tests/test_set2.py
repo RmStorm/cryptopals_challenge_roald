@@ -3,10 +3,12 @@ import base64
 
 import pytest
 
-from cryptopals_challenge_roald.crypto_lib import apply_pkcs_7_padding, AesEcbCipher, AesCbcCipher
+from cryptopals_challenge_roald.crypto_lib import apply_pkcs_7_padding, AesEcbCipher, AesCbcCipher, crack_ecb_encryptor
 from cryptopals_challenge_roald.set2.set2_11_ecb_cbc_detection_oracle import encryption_oracle
-from cryptopals_challenge_roald.set2 import set2_12_byte_at_a_time_ecb_decryption
+from cryptopals_challenge_roald.set2.set2_12_byte_at_a_time_ecb_decryption import get_encryptor_with_attacker_prepend
 from cryptopals_challenge_roald.set2.set2_13_ecb_cut_and_paste import profile_for
+from cryptopals_challenge_roald.set2.set2_14_ecb_baat_random_prefix import get_encryptor_with_attack_bytes_in_middle,\
+    crack_ecb_encryptor_with_random_prepend, get_attack_length_for_cipher_increase
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -49,11 +51,11 @@ def test_set_2_11():
 
 
 def test_set_2_12():
-    encryptor = set2_12_byte_at_a_time_ecb_decryption.get_encryptor_with_input_prepend()
+    encryptor = get_encryptor_with_attacker_prepend()
     known_solution = b'Rollin\' in my 5.0\nWith my rag-top down so my hair can blow\n' \
                      b'The girlies on standby waving just to say hi\nDid you stop? No, I just drove by\n'
 
-    assert set2_12_byte_at_a_time_ecb_decryption.crack_ecb_encryptor(encryptor, 16, 138) == known_solution
+    assert crack_ecb_encryptor(encryptor, 16, 138, 0) == known_solution
 
 
 @pytest.mark.parametrize("user_email", ['it@it.com', 'it@it.com', 'it@it.com'])
@@ -61,7 +63,15 @@ def test_set_2_13(user_email):
     import json
 
     print(json.dumps(profile_for(user_email), indent=2))
-    # assert False
+
+
+def test_set_2_14():
+    encryptor = get_encryptor_with_attack_bytes_in_middle()
+    known_solution = b'Rollin\' in my 5.0\nWith my rag-top down so my hair can blow\n' \
+                     b'The girlies on standby waving just to say hi\nDid you stop? No, I just drove by\n'
+
+    attack_length = get_attack_length_for_cipher_increase(encryptor)
+    assert crack_ecb_encryptor_with_random_prepend(encryptor, 16, attack_length) == known_solution
 
 
 if __name__ == '__main__':
