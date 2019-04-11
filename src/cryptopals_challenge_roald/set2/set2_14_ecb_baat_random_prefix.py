@@ -16,8 +16,8 @@ def get_encryptor_with_attack_bytes_in_middle(starting_length: int, random_lengt
     aes_ecb_cipher = AesEcbCipher(unknown_key)
 
     def encryptor(attacker_controlled: bytes) -> bytes:
-        prepend = os.urandom(starting_length + int(os.urandom(1)[0] / (2 ** 8 / random_length)))
-        return aes_ecb_cipher.encrypt(prepend + attacker_controlled + unknown_bytes)
+        prepend_bytes = os.urandom(starting_length + int(os.urandom(1)[0] / (2 ** 8 / random_length)))
+        return aes_ecb_cipher.encrypt(prepend_bytes + attacker_controlled + unknown_bytes)
     return encryptor
 
 

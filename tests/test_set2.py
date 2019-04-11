@@ -80,5 +80,9 @@ def test_set_2_15():
     assert verify_and_remove_pkcs_7_padding(b'ICE ICE BABY\x05\x05\x05\x05') == b'ICE ICE BABY\x05\x05\x05\x05'
 
 
+def test_set_2_16():
+    pass
+
+
 if __name__ == '__main__':
     pytest.main()
