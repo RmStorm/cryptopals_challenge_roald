@@ -20,4 +20,5 @@ HEX_TO_BASE64 = {ak+bk+ck: BIT_TO_BASE64[av+bv[:2]]+BIT_TO_BASE64[bv[-2:]+cv]
 HEX_PAIR_XOR = {ak + bk: ''.join(['1' if int(av_num) + int(bv_num) == 1 else '0' for av_num, bv_num in zip(av, bv)])
                 for ak, av in HEX_TO_BIT.items() for bk, bv in HEX_TO_BIT.items()}
 
-BIT_FLIP_MAP = {bytes([i]): [(int(b)+1)%2 if n == 0 else int(b) for n, b in enumerate(f'{i:08b}')] for i in range(255)}
+BIT_FLIP_MAP = {i: (i+128)%256 for i in range(256)}
+

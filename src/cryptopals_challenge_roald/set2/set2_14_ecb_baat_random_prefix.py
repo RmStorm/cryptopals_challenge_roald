@@ -10,7 +10,7 @@ DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 def get_encryptor_with_attack_bytes_in_middle(starting_length: int, random_length: int):
     unknown_key = os.urandom(16)
-    assert(random_length >= 1 , 'At least 1 byte of randomness is required')
+    assert random_length >= 1 , 'At least 1 byte of randomness is required'
     with open(os.path.join(DIR_PATH, '..', '..', '..', 'data', 'set2_12_data'), 'br') as file_handle:
         unknown_bytes = base64.b64decode(file_handle.read())
     aes_ecb_cipher = AesEcbCipher(unknown_key)
@@ -61,8 +61,7 @@ def crack_ecb_encryptor_with_random_prepend(encryptor: Callable[[bytes], bytes],
 
     cipher_text = get_max_length_cipher(bytes([0]) * (attack_length + block_size * 3))
 
-    number_of_blocks = int(len(cipher_text)/block_size)
-    for cipher_block_index in range(number_of_blocks):
+    for cipher_block_index in range(int(len(cipher_text)/block_size)):
         if block_getter(cipher_text, cipher_block_index) == block_getter(cipher_text, cipher_block_index+1):
             zeros_cipher = block_getter(cipher_text, cipher_block_index)
             last_attacker_block_index = cipher_block_index+1

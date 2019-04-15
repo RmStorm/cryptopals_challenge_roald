@@ -14,7 +14,6 @@ def apply_pkcs_7_padding(input_bytes: bytes, block_length: int) -> bytes:
 
 def verify_and_remove_pkcs_7_padding(input_bytes: Union[bytes, bytearray]):
     final_pad = input_bytes[-1]
-    print(final_pad)
     if all(pad == final_pad for pad in input_bytes[-int(final_pad):]):
         return input_bytes[:-int(final_pad)]
     else:
