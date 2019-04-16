@@ -5,6 +5,12 @@ from cryptography.hazmat.backends import default_backend
 
 from cryptopals_challenge_roald.roald_codecs import HEX_TO_BIT
 
+class CryptoPalsLibError(Exception):
+    pass
+
+class PaddingError(CryptoPalsLibError):
+    pass
+
 
 def apply_pkcs_7_padding(input_bytes: bytes, block_size: int) -> bytes:
     padding_length = block_size - (len(input_bytes) % block_size)
@@ -16,7 +22,7 @@ def verify_and_remove_pkcs_7_padding(input_bytes: Union[bytes, bytearray]):
     if all(pad == final_pad for pad in input_bytes[-int(final_pad):]):
         return input_bytes[:-int(final_pad)]
     else:
-        raise ValueError('Invallid padding detected')
+        raise PaddingError('Invallid padding detected')
         # return input_bytes
 
 
