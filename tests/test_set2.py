@@ -10,22 +10,22 @@ from cryptopals_challenge_roald.set2.set2_12_byte_at_a_time_ecb_decryption impor
 from cryptopals_challenge_roald.set2.set2_13_ecb_cut_and_paste import profile_for
 from cryptopals_challenge_roald.set2.set2_14_ecb_baat_random_prefix import get_encryptor_with_attack_bytes_in_middle,\
     crack_ecb_encryptor_with_random_prepend, get_attack_length_for_cipher_increase
-from cryptopals_challenge_roald.set2.set2_16_CBC_bitflipping_attack import get_cbc_encryptor_and_decryptor,\
+from cryptopals_challenge_roald.set2.set2_16_cbc_bitflipping_attack import get_cbc_encryptor_and_decryptor,\
     get_admin_cipher
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
-@pytest.mark.parametrize("block_length", [4, 8, 16, 20, 36])
-def test_set_2_9(block_length):
+@pytest.mark.parametrize("block_size", [4, 8, 16, 20, 36])
+def test_set_2_9(block_size):
     bytes_str = b'A random string with some characters'
 
-    padded = apply_pkcs_7_padding(bytes_str, block_length)
-    if len(bytes_str) % block_length == 0:
-        assert len(padded) == len(bytes_str)
+    padded = apply_pkcs_7_padding(bytes_str, block_size)
+    if len(bytes_str) % block_size == 0:
+        assert len(padded) == len(bytes_str) + block_size
     else:
         assert padded[:-padded[-1]] == bytes_str
         assert padded[-padded[-1]:] == bytes([padded[-1]])*padded[-1]
-    assert len(padded) % block_length == 0
+    assert len(padded) % block_size == 0
 
 
 def test_set_2_10():
@@ -39,7 +39,8 @@ def test_set_2_10():
 
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.CBC(bytes([0])*len(key)), backend=backend)
-    assert cipher.decryptor().update(encrypted_bytes) == aes_cbc_cipher.decrypt(encrypted_bytes)
+    library_cbc_output = verify_and_remove_pkcs_7_padding(cipher.decryptor().update(encrypted_bytes))
+    assert library_cbc_output == aes_cbc_cipher.decrypt(encrypted_bytes)
 
 
 def test_set_2_11():
@@ -78,7 +79,8 @@ def test_set_2_14():
 
 def test_set_2_15():
     assert verify_and_remove_pkcs_7_padding(b'ICE ICE BABY\x04\x04\x04\x04') == b'ICE ICE BABY'
-    assert verify_and_remove_pkcs_7_padding(b'ICE ICE BABY\x05\x05\x05\x05') == b'ICE ICE BABY\x05\x05\x05\x05'
+    with pytest.raises(ValueError):
+        verify_and_remove_pkcs_7_padding(b'ICE ICE BABY\x05\x05\x05\x05')
 
 
 def test_set_2_16():

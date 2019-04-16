@@ -1,7 +1,7 @@
 import os
 
 from cryptopals_challenge_roald.roald_codecs import BIT_FLIP_MAP
-from cryptopals_challenge_roald.crypto_lib import AesCbcCipher, verify_and_remove_pkcs_7_padding
+from cryptopals_challenge_roald.crypto_lib import AesCbcCipher
 
 
 def get_cbc_encryptor_and_decryptor():
@@ -15,7 +15,7 @@ def get_cbc_encryptor_and_decryptor():
         return aes_cbc_cipher.encrypt(prepend_bytes + cleaned_bytes + append_bytes)
 
     def decryptor(cipher_text: bytes) -> bool:
-        plain_text = verify_and_remove_pkcs_7_padding(aes_cbc_cipher.decrypt(cipher_text))
+        plain_text = aes_cbc_cipher.decrypt(cipher_text)
         # Notice that this will throw an error sometimes, Since there are bitflips in one block of the cipher text,
         # one block of the plain text will be scrambled,
         # A random b';' could pop up in the plain text. this breaks the cookie creation.

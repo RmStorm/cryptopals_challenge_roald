@@ -6,9 +6,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptopals_challenge_roald.roald_codecs import HEX_TO_BIT
 
 
-def apply_pkcs_7_padding(input_bytes: bytes, block_length: int) -> bytes:
-    modulo_length = len(input_bytes) % block_length
-    padding_length = (block_length - modulo_length) if modulo_length != 0 else 0
+def apply_pkcs_7_padding(input_bytes: bytes, block_size: int) -> bytes:
+    padding_length = block_size - (len(input_bytes) % block_size)
     return input_bytes + bytes([padding_length])*padding_length
 
 
@@ -17,7 +16,8 @@ def verify_and_remove_pkcs_7_padding(input_bytes: Union[bytes, bytearray]):
     if all(pad == final_pad for pad in input_bytes[-int(final_pad):]):
         return input_bytes[:-int(final_pad)]
     else:
-        return input_bytes
+        raise ValueError('Invallid padding detected')
+        # return input_bytes
 
 
 def bytes_xor(byte_str1: bytes, byte_str2: Union[bytes, iter]) -> bytes:
@@ -46,7 +46,7 @@ class AesEcbCipher(object):
         return self.encryptor.update(apply_pkcs_7_padding(byte_str, self.key_size))
 
     def decrypt(self, byte_str: bytes):
-        return self.decryptor.update(byte_str)
+        return verify_and_remove_pkcs_7_padding(self.decryptor.update(byte_str))
 
 
 class AesCbcCipher(object):
@@ -72,7 +72,7 @@ class AesCbcCipher(object):
             this_block = byte_str[i * self.key_size:(i + 1) * self.key_size]
             decrypted_blocks.append(bytes_xor(prev_block, self.aes_ecb_cipher.decryptor.update(this_block)))
             prev_block = this_block
-        return b''.join(decrypted_blocks)
+        return verify_and_remove_pkcs_7_padding(b''.join(decrypted_blocks))
 
 
 def crack_ecb_encryptor(encryptor, block_size, secret_string_length, start_block):

@@ -72,11 +72,12 @@ def crack_ecb_encryptor_with_random_prepend(encryptor: Callable[[bytes], bytes],
         cipher_text = get_max_length_cipher(bytes([0]) * attack_length + zeros_with_a_one)
         zeros_with_a_one[i] = 0
         if block_getter(cipher_text, last_attacker_block_index) != zeros_cipher:
-            seven_zeros_ending_on_one_cipher = block_getter(cipher_text, last_attacker_block_index)
+            zeros_ending_on_one_cipher = block_getter(cipher_text, last_attacker_block_index)
             end_of_last_attacker_block = i
             break
+    # The string looks like this sort off: b'hdfkjsjhgdy000000000010000000TheSecrettext88888888
     secret_string_length = (len(cipher_text) - (last_attacker_block_index + 1) * block_size) - \
-                           len(zeros_with_a_one[1+end_of_last_attacker_block:]) - 15
+                           len(zeros_with_a_one[1+end_of_last_attacker_block:]) - block_size
 
     zeros_with_a_one[end_of_last_attacker_block+1] = 1
     attack_bytes_first_part = bytes([0]) * (attack_length-1) + zeros_with_a_one[:end_of_last_attacker_block+2]
@@ -84,7 +85,7 @@ def crack_ecb_encryptor_with_random_prepend(encryptor: Callable[[bytes], bytes],
     def get_cipher_text(attack_bytes_extra: Union[bytearray, bytes]) -> bytes:
         for _ in range(retries_for_max):
             cipher_text = encryptor(attack_bytes_first_part + attack_bytes_extra)
-            if seven_zeros_ending_on_one_cipher == block_getter(cipher_text, last_attacker_block_index):
+            if zeros_ending_on_one_cipher == block_getter(cipher_text, last_attacker_block_index):
                 return cipher_text
         raise RuntimeError(f'recognizable string was not encountered in ciphertext in {retries_for_max} tries')
 
