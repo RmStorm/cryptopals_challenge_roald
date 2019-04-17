@@ -22,8 +22,7 @@ def verify_and_remove_pkcs_7_padding(input_bytes: Union[bytes, bytearray]):
     if all(pad == final_pad for pad in input_bytes[-int(final_pad):]):
         return input_bytes[:-int(final_pad)]
     else:
-        raise PaddingError('Invallid padding detected')
-        # return input_bytes
+        raise PaddingError('Invalid padding detected')
 
 
 def bytes_xor(byte_str1: bytes, byte_str2: Union[bytes, iter]) -> bytes:
