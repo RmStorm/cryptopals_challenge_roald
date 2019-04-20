@@ -2,6 +2,8 @@ import os
 import base64
 
 import pytest
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
 
 from cryptopals_challenge_roald.crypto_lib import AesEcbCipher, AesCbcCipher, crack_ecb_encryptor, \
     apply_pkcs_7_padding, verify_and_remove_pkcs_7_padding, PaddingError
@@ -33,9 +35,6 @@ def test_set_2_10():
         encrypted_bytes = base64.b64decode(file_handle.read())
     key = b'YELLOW SUBMARINE'
     aes_cbc_cipher = AesCbcCipher(key, bytes([0])*len(key))
-
-    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-    from cryptography.hazmat.backends import default_backend
 
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.CBC(bytes([0])*len(key)), backend=backend)

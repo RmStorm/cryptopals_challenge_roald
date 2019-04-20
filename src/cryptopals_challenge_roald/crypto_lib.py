@@ -1,3 +1,4 @@
+import struct
 from typing import Union
 
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -78,6 +79,21 @@ class AesCbcCipher(object):
             decrypted_blocks.append(bytes_xor(prev_block, self.aes_ecb_cipher.decryptor.update(this_block)))
             prev_block = this_block
         return verify_and_remove_pkcs_7_padding(b''.join(decrypted_blocks))
+
+
+class AesCtrCipher(object):
+    def __init__(self, key, nonce):
+        self.aes_ecb_cipher = AesEcbCipher(key)
+        self.key_size = len(key)
+        self.nonce = nonce
+
+    def encrypt(self, byte_str: bytes):
+        encrypted_bytes = bytearray()
+        for i, byte in enumerate(byte_str):
+            if i%16 == 0:
+                key_stream = self.aes_ecb_cipher.encryptor.update(self.nonce + struct.pack('<Q', int(i/16)))
+            encrypted_bytes.append(byte ^ key_stream[i % 16])
+        return encrypted_bytes
 
 
 def crack_ecb_encryptor(encryptor, block_size, secret_string_length, start_block):
