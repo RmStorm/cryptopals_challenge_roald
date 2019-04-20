@@ -4,7 +4,7 @@ import base64
 import pytest
 
 from cryptopals_challenge_roald.crypto_lib import AesEcbCipher, AesCbcCipher, crack_ecb_encryptor, \
-    apply_pkcs_7_padding, verify_and_remove_pkcs_7_padding
+    apply_pkcs_7_padding, verify_and_remove_pkcs_7_padding, PaddingError
 from cryptopals_challenge_roald.set2.set2_11_ecb_cbc_detection_oracle import encryption_oracle
 from cryptopals_challenge_roald.set2.set2_12_byte_at_a_time_ecb_decryption import get_encryptor_with_attacker_prepend
 from cryptopals_challenge_roald.set2.set2_13_ecb_cut_and_paste import profile_for
@@ -46,6 +46,7 @@ def test_set_2_10():
 def test_set_2_11():
     def ecb_encryptor(encryptable_bytes, key):
         return AesEcbCipher(key).encrypt(encryptable_bytes)
+
     def cbc_encryptor(encryptable_bytes, key):
         return AesCbcCipher(key, os.urandom(len(key))).encrypt(encryptable_bytes)
 
@@ -79,7 +80,7 @@ def test_set_2_14():
 
 def test_set_2_15():
     assert verify_and_remove_pkcs_7_padding(b'ICE ICE BABY\x04\x04\x04\x04') == b'ICE ICE BABY'
-    with pytest.raises(ValueError):
+    with pytest.raises(PaddingError):
         verify_and_remove_pkcs_7_padding(b'ICE ICE BABY\x05\x05\x05\x05')
 
 
