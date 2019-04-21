@@ -21,7 +21,7 @@ def test_set_3_18():
     """I test my implementation against a string instead of the cryptography library, this is because my implementation
     is supposed to concat the nonce and the counter. The crypto library adds the counter to the nonce"""
     encrypted_bytes = base64.decodebytes(b'L77na/nrFsKvynd6HzOoG7GHTLXsTVu9qvY/2syLXzhPweyyMTJULu/6/kXX0KSvoOLSFQ==')
-    aes_ctr_cipher = AesCtrCipher(b'YELLOW SUBMARINE', struct.pack('<Q', 0))
+    aes_ctr_cipher = AesCtrCipher(b'YELLOW SUBMARINE', 0)
     assert b"Yo, VIP Let\'s kick it Ice, Ice, baby Ice, Ice, baby " == aes_ctr_cipher.encrypt(encrypted_bytes)
 
     some_other_string = b'some_other_string'

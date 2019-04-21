@@ -6,6 +6,9 @@ from cryptography.hazmat.backends import default_backend
 
 from cryptopals_challenge_roald.roald_codecs import HEX_TO_BIT
 
+ALPHABET_BYTES = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' "
+
+
 class CryptoPalsLibError(Exception):
     pass
 
@@ -85,7 +88,7 @@ class AesCtrCipher(object):
     def __init__(self, key, nonce):
         self.aes_ecb_cipher = AesEcbCipher(key)
         self.key_size = len(key)
-        self.nonce = nonce
+        self.nonce = struct.pack('<Q', nonce)
 
     def encrypt(self, byte_str: bytes):
         encrypted_bytes = bytearray()

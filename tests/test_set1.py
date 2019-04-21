@@ -5,7 +5,7 @@ import pytest
 
 from cryptopals_challenge_roald.crypto_lib import bytes_xor, AesEcbCipher, compute_hamming_distance
 from cryptopals_challenge_roald.set1 import set1_1_hex_to_base64
-from cryptopals_challenge_roald.set1.set1_3_decode_hex import decode_byte_string_with_bytes
+from cryptopals_challenge_roald.set1.set1_3_decode_hex import find_likely_xor_byte_with_alphabet
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -25,7 +25,7 @@ def test_set_1_2():
 
 def test_set_1_3():
     bytes_str = bytes.fromhex('1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736')
-    for k, v in decode_byte_string_with_bytes(bytes_str, .99).items():
+    for k, v in find_likely_xor_byte_with_alphabet(bytes_str, .99).items():
         assert k == b'X'
         assert v == b"Cooking MC's like a pound of bacon"
 
@@ -34,7 +34,7 @@ def test_set_1_4():
     with open(os.path.join(DIR_PATH, '..', 'data', 'set1_4_data'), 'r') as file_handle:
         for line_number, line in enumerate(file_handle):
             if line_number == 170:
-                result = decode_byte_string_with_bytes(bytes.fromhex(line), .99)
+                result = find_likely_xor_byte_with_alphabet(bytes.fromhex(line), .99)
                 for k, v in result.items():
                     assert k == b'5'
                     assert v == b'Now that the party is jumping\n'

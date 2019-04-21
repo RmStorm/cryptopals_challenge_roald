@@ -5,7 +5,7 @@ from itertools import cycle
 
 from cryptopals_challenge_roald.crypto_lib import average_hamming_distance_between_blocks
 from cryptopals_challenge_roald.crypto_lib import bytes_xor
-from cryptopals_challenge_roald.set1.set1_3_decode_hex import decode_byte_string_with_bytes
+from cryptopals_challenge_roald.set1.set1_3_decode_hex import find_likely_xor_byte_with_alphabet
 
 
 def estimate_key_size_for_file(encrypted_bytes: bytes, start_key_size: int, end_key_size: int,
@@ -14,7 +14,7 @@ def estimate_key_size_for_file(encrypted_bytes: bytes, start_key_size: int, end_
     meaningful text is not random the encrypted strings will become similar when split up with the same length as the
     key used to encrypt to text
 
-    This file returns: probable_key, distances, minimum_distance
+    This file returns: probable_key_size, distances, minimum_distance
     usage: key_size, _, _ = estimate_key_size_for_file(encrypted_bytes, 10, 40)
     """
     distances = {}
@@ -29,7 +29,7 @@ def break_key_for_key_length(encrypted_bytes: bytes, key_size: int) -> bytes:
     while any(val is False for val in solved.values()) and threshold > 0:
         for group in range(key_size):
             if not solved[group]:
-                for k, v in decode_byte_string_with_bytes(encrypted_bytes[group::key_size], threshold).items():
+                for k, v in find_likely_xor_byte_with_alphabet(encrypted_bytes[group::key_size], threshold).items():
                     solved[group] = k
         threshold = threshold - .04
         print(threshold)
