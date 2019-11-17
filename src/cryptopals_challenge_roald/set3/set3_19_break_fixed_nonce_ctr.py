@@ -39,12 +39,11 @@ def print_current_options(possible_xor_byte_dict, current_byte):
             print(v)
 
 
-def main():
-    cipher_texts = encrypt_with_same_nonce('set3_19_data')
+def get_initial_likely_bytes(cipher_texts, truncated=False):
     possible_xor_bytes = bytearray()
     possible_xor_byte_dicts = []
-    for aligned_bytes in itertools.zip_longest(*cipher_texts):
-        # for aligned_bytes in zip(*cipher_texts):
+    byte_iterator = zip(*cipher_texts) if truncated else itertools.zip_longest(*cipher_texts)
+    for aligned_bytes in byte_iterator:
         actual_aligned_bytes = bytearray([b for b in aligned_bytes if b])
         print(f'There are {len(actual_aligned_bytes)} valid bytes at this N')
         alphabet_bytes = {}
@@ -54,7 +53,12 @@ def main():
             percentage -= .005
         possible_xor_byte_dicts.append(alphabet_bytes)
         possible_xor_bytes.append(next(iter(possible_xor_byte_dicts[-1].keys()))[0])
+    return possible_xor_byte_dicts, possible_xor_bytes
 
+
+def main():
+    cipher_texts = encrypt_with_same_nonce('set3_19_data')
+    possible_xor_byte_dicts, possible_xor_bytes = get_initial_likely_bytes(cipher_texts)
     for i in range(len(possible_xor_bytes)):
         for byte in itertools.cycle(possible_xor_byte_dicts[i].keys()):
             possible_xor_bytes[i] = byte[0]
