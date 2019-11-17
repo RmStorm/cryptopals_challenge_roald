@@ -2,6 +2,8 @@ import os
 import base64
 import itertools
 
+from colorama import Fore, Style
+
 from cryptopals_challenge_roald.set1.set1_3_decode_hex import find_likely_xor_byte_with_alphabet
 from cryptopals_challenge_roald.crypto_lib import AesCtrCipher, bytes_xor
 
@@ -19,26 +21,44 @@ def encrypt_with_same_nonce():
     return encrypted_lines
 
 
+def print_cipher_text_with_colored_n(cipher_texts, possible_xor_bytes, n=1000):
+    for cipher_text in cipher_texts:
+        guess = bytes_xor(cipher_text, possible_xor_bytes).decode("UTF-8")
+        if n < len(guess):
+            print(f'{guess[0:n]}{Fore.GREEN}{(guess[n])}{Style.RESET_ALL}{guess[n+1:]}')
+        else:
+            print(guess)
+
+
+def print_current_options(possible_xor_byte_dict, current_byte):
+    print(f"\n These are the options for these positions")
+    for k, v in possible_xor_byte_dict.items():
+        if k == current_byte:
+            print(f'{Fore.GREEN}{v}{Style.RESET_ALL}')
+        else:
+            print(v)
+
+
 def main():
     cipher_texts = encrypt_with_same_nonce()
     possible_xor_bytes = bytearray()
     possible_xor_byte_dicts = []
     for aligned_bytes in itertools.zip_longest(*cipher_texts):
-        print(len(list(b for b in aligned_bytes if b)))
+        actual_aligned_bytes = bytearray([b for b in aligned_bytes if b])
+        print(f'There are {len(actual_aligned_bytes)} valid bytes at this N')
         alphabet_bytes = {}
         percentage = .99
         while len(alphabet_bytes) < 2:
-            alphabet_bytes = find_likely_xor_byte_with_alphabet(list(b for b in aligned_bytes if b), percentage)
+            alphabet_bytes = find_likely_xor_byte_with_alphabet(actual_aligned_bytes, percentage)
             percentage -= .01
         possible_xor_byte_dicts.append(alphabet_bytes)
         possible_xor_bytes.append(next(iter(possible_xor_byte_dicts[-1].keys()))[0])
 
     for i in range(len(possible_xor_bytes)):
-        for byte in possible_xor_byte_dicts[i].keys():
+        for byte in itertools.cycle(possible_xor_byte_dicts[i].keys()):
             possible_xor_bytes[i] = byte[0]
-            for cipher_text in cipher_texts:
-                print(bytes_xor(cipher_text, possible_xor_bytes))
-            print(' ', ''.join(str(i%10) for i in range(len(possible_xor_bytes))))
+            print_cipher_text_with_colored_n(cipher_texts, possible_xor_bytes, i)
+            print_current_options(possible_xor_byte_dicts[i], byte)
             good = input(f'Do you think byte {i} is correct? enter y or n')
             if good == 'y':
                 break

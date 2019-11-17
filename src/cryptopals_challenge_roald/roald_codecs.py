@@ -22,3 +22,6 @@ HEX_PAIR_XOR = {ak + bk: ''.join(['1' if int(av_num) + int(bv_num) == 1 else '0'
 
 BIT_FLIP_MAP = {i: (i+128)%256 for i in range(256)}
 
+if __name__ == '__main__':
+    print(HEX_TO_BIT)
+    print(BIT_TO_BASE64)

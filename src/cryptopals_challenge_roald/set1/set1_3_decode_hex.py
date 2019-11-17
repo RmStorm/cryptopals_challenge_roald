@@ -6,11 +6,8 @@ from cryptopals_challenge_roald.crypto_lib import bytes_xor, ALPHABET_BYTES
 def find_likely_xor_byte_with_alphabet(bytes_str: bytes, percentage: float):
     result = {}
     for byte in [bytes([i]) for i in range(2**8)]:
-        score = 0
         decoded_bytes = bytes_xor(bytes_str, cycle(byte))
-        for decoded_byte in decoded_bytes:
-            if bytes([decoded_byte]) in ALPHABET_BYTES:
-                score = score + 1
+        score = len([decoded_byte for decoded_byte in decoded_bytes if bytes([decoded_byte]) in ALPHABET_BYTES])
         if score > percentage * len(bytes_str):
             result[byte] = decoded_bytes
     return result

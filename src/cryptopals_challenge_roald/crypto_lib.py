@@ -88,6 +88,7 @@ class AesCtrCipher(object):
     def __init__(self, key, nonce):
         self.aes_ecb_cipher = AesEcbCipher(key)
         self.key_size = len(key)
+        # <Q = little endian unsigned long long: https://docs.python.org/3.7/library/struct.html#struct-format-strings
         self.nonce = struct.pack('<Q', nonce)
 
     def encrypt(self, byte_str: bytes):
