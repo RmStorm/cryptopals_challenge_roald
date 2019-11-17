@@ -4,14 +4,14 @@ import itertools
 
 from colorama import Fore, Style
 
-from cryptopals_challenge_roald.set1.set1_3_decode_hex import find_likely_xor_byte_with_alphabet
+from cryptopals_challenge_roald.set1.set1_3_decode_hex import find_likely_xor_byte_with_score_alphabet
 from cryptopals_challenge_roald.crypto_lib import AesCtrCipher, bytes_xor
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
-def encrypt_with_same_nonce():
-    with open(os.path.join(DIR_PATH, '..', '..', '..', 'data', 'set3_19_data'), 'br') as file_handle:
+def encrypt_with_same_nonce(data_file):
+    with open(os.path.join(DIR_PATH, '..', '..', '..', 'data', data_file), 'br') as file_handle:
         data_lines = file_handle.read().splitlines()
 
     unknown_key = os.urandom(16)
@@ -40,17 +40,18 @@ def print_current_options(possible_xor_byte_dict, current_byte):
 
 
 def main():
-    cipher_texts = encrypt_with_same_nonce()
+    cipher_texts = encrypt_with_same_nonce('set3_19_data')
     possible_xor_bytes = bytearray()
     possible_xor_byte_dicts = []
     for aligned_bytes in itertools.zip_longest(*cipher_texts):
+        # for aligned_bytes in zip(*cipher_texts):
         actual_aligned_bytes = bytearray([b for b in aligned_bytes if b])
         print(f'There are {len(actual_aligned_bytes)} valid bytes at this N')
         alphabet_bytes = {}
         percentage = .99
-        while len(alphabet_bytes) < 2:
-            alphabet_bytes = find_likely_xor_byte_with_alphabet(actual_aligned_bytes, percentage)
-            percentage -= .01
+        while len(alphabet_bytes) < 1:
+            alphabet_bytes = find_likely_xor_byte_with_score_alphabet(actual_aligned_bytes, percentage)
+            percentage -= .005
         possible_xor_byte_dicts.append(alphabet_bytes)
         possible_xor_bytes.append(next(iter(possible_xor_byte_dicts[-1].keys()))[0])
 

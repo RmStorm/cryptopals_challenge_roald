@@ -7,6 +7,11 @@ from cryptography.hazmat.backends import default_backend
 from cryptopals_challenge_roald.roald_codecs import HEX_TO_BIT
 
 ALPHABET_BYTES = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789' "
+SCORED_ALPHABET = {b"abcdefghijklmnopqrstuvwxyz": 1,
+                   b"ABCDEFGHIJKLMNOPQRSTUVWXYZ": 1,
+                   b" ": .9,
+                   b"0123456789": .6,
+                   b"'\"": .5,}
 
 
 class CryptoPalsLibError(Exception):
@@ -14,6 +19,15 @@ class CryptoPalsLibError(Exception):
 
 class PaddingError(CryptoPalsLibError):
     pass
+
+
+def score_string(scorable_string: Union[bytes, bytearray, str], absolute_score=False):
+    if type(scorable_string) == str:
+        scorable_string = bytes(scorable_string, 'utf-8')
+    summed_score = sum(v for character in scorable_string for k, v in SCORED_ALPHABET.items() if character in k)
+    if absolute_score:
+        return summed_score
+    return summed_score/len(scorable_string)
 
 
 def apply_pkcs_7_padding(input_bytes: bytes, block_size: int) -> bytes:

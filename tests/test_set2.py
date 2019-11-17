@@ -92,4 +92,4 @@ def test_set_2_16():
 
 
 if __name__ == '__main__':
-    pytest.main()
+    pytest.main(['test_set2.py'])
