@@ -43,6 +43,7 @@ def get_initial_likely_bytes(cipher_texts, truncated=False):
     possible_xor_bytes = bytearray()
     possible_xor_byte_dicts = []
     byte_iterator = zip(*cipher_texts) if truncated else itertools.zip_longest(*cipher_texts)
+
     for aligned_bytes in byte_iterator:
         actual_aligned_bytes = bytearray([b for b in aligned_bytes if b])
         print(f'There are {len(actual_aligned_bytes)} valid bytes at this N')

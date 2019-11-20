@@ -3,9 +3,13 @@ import base64
 
 import pytest
 
-from cryptopals_challenge_roald.crypto_lib import AesCtrCipher
+from cryptopals_challenge_roald.crypto_lib import AesCtrCipher, bytes_xor
 from cryptopals_challenge_roald.set3.set3_17_cbc_padding_oracle import cbc_padding_oracle_attack, \
     get_cbc_encryptor_and_decryptor_of_set_17_data
+from cryptopals_challenge_roald.set3.set3_19_break_fixed_nonce_ctr import encrypt_with_same_nonce, \
+    get_initial_likely_bytes
+from cryptopals_challenge_roald.set3.set3_21_mersenne_prng import MersenneTwister
+
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -25,6 +29,31 @@ def test_set_3_18():
 
     some_other_string = b'some_other_string'
     assert aes_ctr_cipher.encrypt(aes_ctr_cipher.encrypt(some_other_string)) == some_other_string
+
+
+@pytest.mark.slow
+def test_set_3_19_20():
+    test_set = 'set3_20_data'
+    with open(os.path.join(DIR_PATH, '..', 'data', test_set), 'br') as file_handle:
+        data_lines = [base64.b64decode(data_line) for data_line in file_handle.read().splitlines()]
+
+    cipher_texts = encrypt_with_same_nonce(test_set)
+    possible_xor_byte_dicts, possible_xor_bytes = get_initial_likely_bytes(cipher_texts, truncated=True)
+
+    for cipher_text, answer in zip(cipher_texts, data_lines):
+        assert answer[:len(possible_xor_bytes)] == bytes_xor(cipher_text, possible_xor_bytes)
+
+
+def test_set_3_21():
+    """Test Mersenne Twister with data from https://create.stephan-brumme.com/mersenne-twister/"""
+    correct = {5489: [0xD091BB5C, 0x22AE9EF6, 0xE7E1FAEE, 0xD5C31F79, 0x2082352C, 0xF807B7DF,
+                      0xE9D30005, 0x3895AFE1, 0xA1E24BBA, 0x4EE4092B]}
+
+    mersenne_twister = MersenneTwister()
+    for seed, answers in correct.items():
+        mersenne_twister.seed(seed)
+        for num in answers:
+            assert num == mersenne_twister.generate_number()
 
 
 if __name__ == '__main__':
