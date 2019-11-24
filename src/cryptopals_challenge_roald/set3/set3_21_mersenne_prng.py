@@ -1,5 +1,3 @@
-import random
-
 class MersenneTwister():
     def __init__(self):
         self.set_to_32_bits()
@@ -32,12 +30,12 @@ class MersenneTwister():
         self.MT = [0] * self.n
         self.current_index = self.n + 1
 
-        self.word_mask = int('f'*int(self.w/4), 16)
+        self.word_mask = int('1'*self.w, 2)
         self.lower_mask = (1 << self.r) - 1
         self.upper_mask = self.word_mask & (~self.lower_mask)
-        print(f'lower = {self.lower_mask:064b}\nupper = {self.upper_mask:064b}')
-        print(f'lower = {self.lower_mask:016x}\nupper = {self.upper_mask:016x}')
-        print(f'word_mask = {self.word_mask:016x}')
+        # print(f'lower = {self.lower_mask:064b}\nupper = {self.upper_mask:064b}')
+        # print(f'lower = {self.lower_mask:016x}\nupper = {self.upper_mask:016x}')
+        # print(f'word_mask = {self.word_mask:016x}')
 
 
     def output_all(self):

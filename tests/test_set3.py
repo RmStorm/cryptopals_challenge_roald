@@ -9,6 +9,7 @@ from cryptopals_challenge_roald.set3.set3_17_cbc_padding_oracle import cbc_paddi
 from cryptopals_challenge_roald.set3.set3_19_break_fixed_nonce_ctr import encrypt_with_same_nonce, \
     get_initial_likely_bytes
 from cryptopals_challenge_roald.set3.set3_21_mersenne_prng import MersenneTwister
+from cryptopals_challenge_roald.set3.set3_23_copy_mersenne_twister_state import un_temper
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -54,6 +55,16 @@ def test_set_3_21():
         mersenne_twister.seed(seed)
         for num in answers:
             assert num == mersenne_twister.generate_number()
+
+
+def test_set_3_22():
+    mersenne_twister = MersenneTwister()
+    mersenne_twister.seed(87634)
+    w, n, m, r, a, b, c, s, t, u, d, l, f = mersenne_twister.output_all()
+
+    random_numbers = [mersenne_twister.generate_number() for _ in range(10)]
+    for num in random_numbers:
+        assert num == un_temper(mersenne_twister.temper_output(num), w, b, c, d, u, s, t, l)
 
 
 if __name__ == '__main__':
